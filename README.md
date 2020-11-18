@@ -17,6 +17,8 @@ The program will replace values in the input file as follows:
 ^0 :: Replaced with first word enterd in uppercase  
 ^1 :: Replaced with second word entered in uppercase  
 ^n :: Where n is a number between 0 and 30, will be replaced with word n entered in uppercase  
+
+*** Ensure you enter at least as many words as marked up numbers in input file, otherwise will error ***
   
 Use Cases  
 =========  
