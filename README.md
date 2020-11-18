@@ -1,5 +1,7 @@
 # filetemplate
 
+Copy input file to output file replacing marked values in file.
+
 /f :: From File  
 /t :: Output File  
   
