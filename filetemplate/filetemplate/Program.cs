@@ -39,7 +39,7 @@ namespace filetemplate
 
                     if (result.HasErrors == false)
                     {
-                        int counter = 1;
+                        int counter = 0;
                         bool getwords = true;
 
                         while (getwords)
@@ -54,15 +54,7 @@ namespace filetemplate
                             }
                         }
 
-                        if (words.Count > 0)
-                        {
-                            if (words.Count > 1)
-                            Console.WriteLine($"Enter seperator.");
-                            String seperator = Console.ReadLine();
-
-                            CreateFile((ApplicationArguments)(b.Object), words, seperator);
-                        }
-                        else
+                        if (words.Count == 0)
                         {
                             Console.WriteLine("No words entered.");
                         }
@@ -86,35 +78,44 @@ namespace filetemplate
         public static void CreateFile(ApplicationArguments args, List<string> words, string seperator)
         {
 
-            bool first = true;
             string value = string.Empty;
             List<string> outputLines = new List<string>();
+            List<string> upperWords = new List<string>();
+
 
             foreach (var word in words)
             {
-                if (first)
-                {
-                    value = word;
-                    first = false;
-                }
-                else value += seperator + word;
+                upperWords.Add(word.ToUpper());
             }
 
             var inputLines = File.ReadAllLines(args.CopyFrom);
 
             foreach (var line in inputLines)
             {
-                var inLine = Encrypt(line);
-                var outLine = Unencrypt(string.Format(inLine, value, value.ToUpper()));
+
+                // Normal Case
+                var inLine = Encrypt(line, "@");
+                var outLine = Unencrypt(string.Format(inLine, words.ToArray()));
+
+                // Upper Case
+                inLine = Encrypt(outLine, "^");
+                outLine = Unencrypt(string.Format(inLine, upperWords.ToArray()));
+
                 outputLines.Add(outLine);
             }
 
             File.WriteAllLines(args.CopyTo, outputLines);
         }
 
-        private static string Encrypt(string line)
+        private static string Encrypt(string line, string key)
         {
-            string result = line.Replace("{", "^^").Replace("}", "^#").Replace("@0", "{0}").Replace("@1", "{1}");
+            string result = line.Replace("{", "^^").Replace("}", "^#");
+            for (int i = 0; i < 30; i++)
+            {
+                string str1 = key + $"{i}";
+                string str2 = "{" + $"{i}" + "}";
+                result = result.Replace(str1, str2);
+            }
             return result;
         }
 
